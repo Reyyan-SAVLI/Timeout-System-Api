@@ -13,6 +13,11 @@ export class AddUserDto{
     surname : string;
 
     @ApiProperty({
+        example: 'reyyan@gmail.com'
+    })
+    email : string;
+
+    @ApiProperty({
         example: '12345'
     })
     password : string;

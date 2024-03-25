@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Breaks } from './entities/breaks.entity';
 import { AuthModule } from './auth/auth.module';
+import { BreaksModule } from './breaks/breaks.module';
 
 @Module({
   imports: [ TypeOrmModule.forRoot({
@@ -18,7 +19,8 @@ import { AuthModule } from './auth/auth.module';
     entities: [User, Breaks],
     synchronize: true}),
     UserModule,
-    AuthModule],
+    AuthModule,
+    BreaksModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -19,9 +19,14 @@ export class UserService {
         const newUser = await this.userRepository.create();
         newUser.name = addUserDto.name;
         newUser.surname = addUserDto.surname;
+        newUser.email = addUserDto.email;
         newUser.password = addUserDto.password;
         newUser.department = addUserDto.department;
 
         await this.userRepository.save(newUser);
+    }
+
+    findEmail(email: string): Promise<User>{
+        return this.userRepository.findOneBy({email});
     }
 }
