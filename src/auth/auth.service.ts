@@ -1,23 +1,45 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PRIVATEKEY, SECRET } from 'src/config/config';
-import { LoginUserDto } from 'src/dtos/loginUser.dto';
-import { ReLoginUserDto } from 'src/dtos/reLoginUser.dto';
-import { User } from 'src/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import * as argon2 from 'argon2';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private jwtService : JwtService){}
+      constructor(private userService: UserService,
+        private jwtService: JwtService
+      ){}
 
-  async login(user: any): Promise<any>{
+      async validateUserCreds(email: string, password: string): Promise<any>{
+        const user = await this.userService.findEmail(email);
+
+        if(!user) throw new BadRequestException();
+
+        if(! await bcrypt.compare(password, user.password))
+          throw new UnauthorizedException();
+
+        return user;
+      }
+
+      async generateToken(user: any){
+        const payload = {name: user.name, sub: user.id,};
+        return{
+          access_token : this.jwtService.sign(payload,{
+            secret: process.env.APP_SECRET
+          })
+        }
+      }
+
+
+
+  // // constructor(private jwtService : JwtService){}
+
+  // // async login(user: any): Promise<any>{
     
-    access_token : this.jwtService.sign({
-      user: user, sub: 1
-    })
-  }
+  // //   access_token : this.jwtService.sign({
+  // //     user: user, sub: 1
+  // //   })
+  // // }
 
   // constructor(
   //   private readonly userService : UserService,

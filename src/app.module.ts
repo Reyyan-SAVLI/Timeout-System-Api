@@ -7,9 +7,12 @@ import { User } from './entities/user.entity';
 import { Breaks } from './entities/breaks.entity';
 import { AuthModule } from './auth/auth.module';
 import { BreaksModule } from './breaks/breaks.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ TypeOrmModule.forRoot({
+  imports: [ 
+    ConfigModule.forRoot({isGlobal: true}),
+    TypeOrmModule.forRoot({
     type: 'mysql',
     host: 'localhost',
     port: 3306,
