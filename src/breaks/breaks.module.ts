@@ -4,10 +4,14 @@ import { BreaksService } from './breaks.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Breaks } from 'src/entities/breaks.entity';
 import { User } from 'src/entities/user.entity';
+import { AuthService } from 'src/auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
+import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Breaks, User])],
+  imports: [TypeOrmModule.forFeature([Breaks, User]), AuthModule],
   controllers: [BreaksController],
-  providers: [BreaksService]
+  providers: [BreaksService, AuthService, UserService, JwtService]
 })
 export class BreaksModule {}

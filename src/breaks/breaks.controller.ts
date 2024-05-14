@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { BreaksService } from './breaks.service';
 import { Breaks } from 'src/entities/breaks.entity';
 import { AddBreaksDto } from 'src/dtos/addBreaks.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/entities/user.entity';
 
 @Controller('breaks')
 @ApiTags('Breaks')
@@ -18,10 +19,10 @@ export class BreaksController {
             return await this.breaksService.getUserBreak(email);
     }
 
-    @Post(':email')
+    @Post()
     async addUserBreak(
-        @Param('email') email: string,
+        @Request() req,
         @Body() addBreaksDto: AddBreaksDto){
-            return this.breaksService.addUserBreak(email, addBreaksDto);
+            return this.breaksService.addUserBreak(req.user as User ,addBreaksDto);
         }
 }

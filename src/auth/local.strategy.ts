@@ -18,13 +18,4 @@ export class LocalStrategy extends PassportStrategy(Strategy){
       return user;
    }
 
-   
-//  constructor(){
-//     super()
-//  }
-
-//  async validate(email: string, password: string): Promise<any>{
-
-//     return "success";
-//  }
 }

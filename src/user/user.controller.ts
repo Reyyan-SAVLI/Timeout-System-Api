@@ -7,19 +7,20 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('User')
-@ApiSecurity('bearer')
-@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
     constructor(private readonly userService : UserService){}
 
     @Get()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
     @UseGuards(RolesGuard)
     @Roles('admin')
     getUsers(){
         return this.userService.getUsers();
     }
 
+    
     @Post()
     addUser(@Body() addUserDto : AddUserDto){
         return this.userService.addUser(addUserDto);

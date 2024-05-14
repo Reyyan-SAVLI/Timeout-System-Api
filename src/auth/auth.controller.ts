@@ -16,28 +16,4 @@ export class AuthController {
         return await this.authService.generateToken(req.user);
     }
 
-
-
-
-
-//     constructor(private readonly authService : AuthService){}
-
-//    //  @UseGuards(AuthGuard('local'))
-//    //  @Post()
-//    //  async login(@Req() req){
-//    //     return this.authService.login(req.user);
-//    //  }
-
-//    //  @UseGuards(AuthGuard('jwt'))
-//    //  @Get()
-//    //  async data(){
-//    //     return 'success';
-//    //  }
-//     @Post()
-//     async login(
-//         @Body() loginUserDto : LoginUserDto
-//     ){
-//         return await this.authService.login(loginUserDto);
-//     }
-
 }

@@ -4,7 +4,7 @@ import { User } from "./user.entity";
 @Entity()
 export class Breaks{
     @PrimaryGeneratedColumn()
-    id : number;
+    breakId : number;
 
     @Column()
     workEntry: Date;

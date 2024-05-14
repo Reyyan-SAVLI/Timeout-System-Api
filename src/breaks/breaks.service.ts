@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthService } from 'src/auth/auth.service';
 import { AddBreaksDto } from 'src/dtos/addBreaks.dto';
 import { Breaks } from 'src/entities/breaks.entity';
 import { User } from 'src/entities/user.entity';
@@ -12,8 +13,8 @@ export class BreaksService {
         @InjectRepository(Breaks)
         private readonly breaksRepository: Repository<Breaks>,
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>
-        ){}
+        private readonly userRepository: Repository<User>,
+        private authService: AuthService){}
 
     async getUserBreak(email: string): Promise<Breaks[]>{
         const user = await this.userRepository.findOne({where: {email}, relations: ['breaks']});
@@ -23,11 +24,13 @@ export class BreaksService {
         return user.breaks;
     }
 
-    async addUserBreak(email: string, addBreaksDto: AddBreaksDto): Promise<Breaks>{
-        const user = await this.userRepository.findOne({where: {email}});
-        if (!user) {
-            throw new NotFoundException('User not Found');
-        }
+    async addUserBreak(user: User ,addBreaksDto: AddBreaksDto): Promise<Breaks>{
+        // console.log(id)
+        // const user = await this.userRepository.findOne({where: {id}});
+        // console.log(user)
+        // if (!user) {
+        //     throw new NotFoundException('User not Found');
+        // }
         const newBreak = new Breaks();
         newBreak.workEntry = addBreaksDto.workEntry;
         newBreak.workExit = addBreaksDto.workExit;
