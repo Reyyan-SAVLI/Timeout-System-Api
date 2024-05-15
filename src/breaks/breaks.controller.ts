@@ -5,6 +5,7 @@ import { Breaks } from 'src/entities/breaks.entity';
 import { AddBreaksDto } from 'src/dtos/addBreaks.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
+import { AddWorkDto } from 'src/dtos/addWork.dto';
 
 @Controller('breaks')
 @ApiTags('Breaks')
@@ -14,15 +15,30 @@ export class BreaksController {
     constructor(private readonly breaksService : BreaksService){}
 
     @Get(':email')
-    async getUserBreak(
+    async getUserBreakByEmail(
         @Param('email') email: string): Promise<Breaks[]>{
-            return await this.breaksService.getUserBreak(email);
+        return await this.breaksService.getUserBreakByEmail(email);
     }
 
-    @Post()
+    @Get()
+    async getUserBreak( @Request() req){
+        const userId = req.user.id;
+        return await this.breaksService.getUserBreak(userId);
+    }
+
+    @Post('work')
+    async addUserWork(
+        @Request() req,
+        @Body() addWorkDto: AddWorkDto){
+            
+        return this.breaksService.addUserWork(req.user as User, addWorkDto);
+    }
+
+    @Post('break')
     async addUserBreak(
         @Request() req,
         @Body() addBreaksDto: AddBreaksDto){
-            return this.breaksService.addUserBreak(req.user as User ,addBreaksDto);
-        }
+            
+        return this.breaksService.addUserBreak(req.user as User ,addBreaksDto);
+    }
 }

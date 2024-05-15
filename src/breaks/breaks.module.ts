@@ -8,9 +8,10 @@ import { AuthService } from 'src/auth/auth.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { Work } from 'src/entities/work.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Breaks, User]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Breaks, User, Work]), AuthModule],
   controllers: [BreaksController],
   providers: [BreaksService, AuthService, UserService, JwtService]
 })

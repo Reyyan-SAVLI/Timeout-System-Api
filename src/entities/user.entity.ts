@@ -2,11 +2,12 @@ import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 
 import { Breaks } from "./breaks.entity";
 import * as bcrypt from "bcrypt";
 import { UserRoles } from "src/enums/user.enum";
+import { Work } from "./work.entity";
 
 @Entity()
 export class User{
  @PrimaryGeneratedColumn()
- userId: number;
+ id: number;
 
  @Column()
  name: string;
@@ -28,6 +29,9 @@ export class User{
 
  @OneToMany(()=> Breaks, (breaks) => breaks.user)
  breaks: Breaks[];
+
+ @OneToMany(()=> Work, (work) => work.user)
+ work: Work[];
 
  @BeforeInsert()
     async setPassword(password: string){

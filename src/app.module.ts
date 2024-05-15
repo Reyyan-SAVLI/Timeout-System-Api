@@ -8,6 +8,7 @@ import { Breaks } from './entities/breaks.entity';
 import { AuthModule } from './auth/auth.module';
 import { BreaksModule } from './breaks/breaks.module';
 import { ConfigModule } from '@nestjs/config';
+import { Work } from './entities/work.entity';
 
 @Module({
   imports: [ 
@@ -19,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
     username: 'root',
     password: '1234',
     database: 'timeout_system',
-    entities: [User, Breaks],
+    entities: [User, Breaks, Work],
     synchronize: true}),
     UserModule,
     AuthModule,

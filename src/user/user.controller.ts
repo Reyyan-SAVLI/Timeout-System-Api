@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AddUserDto } from 'src/dtos/addUser.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -13,8 +13,8 @@ export class UserController {
 
     @Get()
     @ApiBearerAuth()
-    @UseGuards(AuthGuard('jwt'))
     @UseGuards(RolesGuard)
+    @UseGuards(AuthGuard('jwt'))
     @Roles('admin')
     getUsers(){
         return this.userService.getUsers();
