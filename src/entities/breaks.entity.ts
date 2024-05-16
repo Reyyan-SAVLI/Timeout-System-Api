@@ -7,10 +7,13 @@ export class Breaks{
     @PrimaryGeneratedColumn()
     breakId : number;
 
-    @Column({ nullable: true })
+    @Column('date')
+    date: Date;
+
+    @Column({type: 'time', nullable: true })
     breakEntry: Date;
 
-    @Column({ nullable: true })
+    @Column({type: 'time',nullable: true })
     breakExit: Date;
 
     @ManyToOne(()=>User, (user)=> user.breaks)

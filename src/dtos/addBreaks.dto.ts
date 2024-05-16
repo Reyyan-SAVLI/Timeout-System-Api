@@ -1,14 +1,21 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 
-export class AddBreaksDto{
+export class AddBreaksInDto{
+    @ApiProperty({
+        description: 'Work date'
+    })
+    date: Date;
+
     @ApiProperty({
         description: 'Break entry time'
     })
-    breakEntry: Date;
+    breakEntry: Date; 
+}
 
+export class AddBreaksOutDto{
     @ApiProperty({
         description: 'Break exit time'
     })
-    breakExit: Date;  
+    breakExit: Date; 
 }

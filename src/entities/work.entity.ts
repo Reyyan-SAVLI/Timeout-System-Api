@@ -7,10 +7,13 @@ export class Work{
     @PrimaryGeneratedColumn()
     workId : number;
 
-    @Column({ nullable: true })
+    @Column('date')
+    date: Date;
+
+    @Column({type: 'time', nullable: true })
     workEntry: Date;
 
-    @Column({ nullable: true })
+    @Column({type: 'time', nullable: true })
     workExit: Date;
 
     @OneToMany(()=> Breaks, (breaks) => breaks.work)

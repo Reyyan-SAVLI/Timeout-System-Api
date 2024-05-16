@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
-import { AddBreaksDto } from 'src/dtos/addBreaks.dto';
-import { AddWorkDto } from 'src/dtos/addWork.dto';
+import { AddBreaksInDto, AddBreaksOutDto } from 'src/dtos/addBreaks.dto';
 import { Breaks } from 'src/entities/breaks.entity';
 import { User } from 'src/entities/user.entity';
 import { Work } from 'src/entities/work.entity';
@@ -17,8 +15,8 @@ export class BreaksService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         @InjectRepository(Work)
-        private readonly workRepository: Repository<Work>,
-        private authService: AuthService){}
+        private readonly workRepository: Repository<Work>)
+    {}
 
     async getUserBreakByEmail(email: string): Promise<Breaks[]>{
         const user = await this.userRepository.findOne({where: {email}, relations: ['breaks']});
@@ -32,22 +30,29 @@ export class BreaksService {
         return await this.breaksRepository.find({ where: { user: { id: userId } } });
     }
 
-    async addUserWork(user: User, addWorkDto: AddWorkDto): Promise<Work>{
-        const newWork = new Work();
-        newWork.workEntry = addWorkDto.workEntry;
-        newWork.workExit = addWorkDto.workExit;
-        newWork.user = user;
-
-        return await this.workRepository.save(newWork);
-    }
-
-    async addUserBreak(user: User ,addBreaksDto: AddBreaksDto): Promise<Breaks>{
-        
+    
+    async userBreakIn(user: User ,addBreaksDto: AddBreaksInDto): Promise<Breaks>{
+        const work = await this.workRepository.findOne({ where: {user}, relations: ['breaks']});
         const newBreak = new Breaks();
+        newBreak.date = addBreaksDto.date;
         newBreak.breakEntry = addBreaksDto.breakEntry;
-        newBreak.breakExit = addBreaksDto.breakExit;
         newBreak.user = user;
+        newBreak.work = work;
 
         return await this.breaksRepository.save(newBreak);
+    }
+
+    async userBreakOut(user: User, addBreaksDto: AddBreaksOutDto): Promise<Breaks>{
+        const { breakExit } = addBreaksDto;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const entry = await this.breaksRepository.findOne({where: {user, date: today}, order: {breakEntry:'DESC' }});
+        
+        if (entry) {
+            entry.breakExit = breakExit;
+            return await this.breaksRepository.save(entry);
+        } else {
+            throw new Error('Mola girişi yok');
+        }
     }
 }

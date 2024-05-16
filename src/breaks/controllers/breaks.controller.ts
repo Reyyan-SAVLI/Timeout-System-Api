@@ -1,11 +1,10 @@
 import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { BreaksService } from './breaks.service';
 import { Breaks } from 'src/entities/breaks.entity';
-import { AddBreaksDto } from 'src/dtos/addBreaks.dto';
+import { AddBreaksInDto, AddBreaksOutDto } from 'src/dtos/addBreaks.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
-import { AddWorkDto } from 'src/dtos/addWork.dto';
+import { BreaksService } from '../services/breaks.service';
 
 @Controller('breaks')
 @ApiTags('Breaks')
@@ -26,19 +25,20 @@ export class BreaksController {
         return await this.breaksService.getUserBreak(userId);
     }
 
-    @Post('work')
-    async addUserWork(
+
+    @Post('in')
+    async userBreakIn(
         @Request() req,
-        @Body() addWorkDto: AddWorkDto){
+        @Body() addBreaksDto: AddBreaksInDto){
             
-        return this.breaksService.addUserWork(req.user as User, addWorkDto);
+        return this.breaksService.userBreakIn(req.user as User ,addBreaksDto);
     }
 
-    @Post('break')
-    async addUserBreak(
+    @Post('out')
+    async userBreakOut(
         @Request() req,
-        @Body() addBreaksDto: AddBreaksDto){
+        @Body() addBreaksDto: AddBreaksOutDto){
             
-        return this.breaksService.addUserBreak(req.user as User ,addBreaksDto);
+        return this.breaksService.userBreakOut(req.user as User, addBreaksDto);
     }
 }
