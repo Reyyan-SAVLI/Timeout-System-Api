@@ -9,10 +9,14 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConfig } from 'src/config/jwt.config';
+import { BreaksModule } from 'src/breaks/breaks.module';
+import { Breaks } from 'src/entities/breaks.entity';
 
 @Module({
-  imports: [PassportModule,
-    TypeOrmModule.forFeature([User]), JwtModule.registerAsync(jwtConfig)],
+  imports: [
+    PassportModule,
+    TypeOrmModule.forFeature([User, Breaks]), 
+    JwtModule.registerAsync(jwtConfig)],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, UserService, JwtService],
   exports: [AuthService]

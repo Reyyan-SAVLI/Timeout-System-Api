@@ -5,6 +5,8 @@ import { WorkService } from "../services/work.service";
 import { AddWorkInDto, AddWorkOutDto } from "src/dtos/addWork.dto";
 import { User } from "src/entities/user.entity";
 import { Work } from "src/entities/work.entity";
+import { RolesGuard } from "src/auth/roles.guard";
+import { Roles } from "src/auth/roles.decorator";
 
 @Controller('work')
 @ApiTags('Work')
@@ -14,18 +16,24 @@ export class WorkController {
     constructor(private readonly workService : WorkService){}
 
     @Get(':email')
+    @UseGuards(RolesGuard)
+    @Roles('admin')
     async getUserBreakByEmail(
         @Param('email') email: string): Promise<Work[]>{
         return await this.workService.getUserWorkByEmail(email);
     }
 
     @Get()
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'member')
     async getUserBreak( @Request() req){
         const userId = req.user.id;
         return await this.workService.getUserWork(userId);
     }
     
     @Post('in')
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'member')
     async userWorkIn(
         @Request() req,
         @Body() addWorkDto: AddWorkInDto){
@@ -34,6 +42,8 @@ export class WorkController {
     }
 
     @Post('out')
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'member')
     async userWorkOut(
         @Request() req,
         @Body() addWorkDto: AddWorkOutDto){
