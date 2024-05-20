@@ -9,7 +9,6 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConfig } from 'src/config/jwt.config';
-import { BreaksModule } from 'src/breaks/breaks.module';
 import { Breaks } from 'src/entities/breaks.entity';
 
 @Module({

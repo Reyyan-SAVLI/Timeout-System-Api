@@ -4,7 +4,6 @@ import { UserService } from "../user.service";
 import { RolesGuard } from "src/auth/roles.guard";
 import { AuthGuard } from "@nestjs/passport";
 import { Roles } from "src/auth/roles.decorator";
-import { User } from "src/entities/user.entity";
 
 @ApiTags('UserBreak')
 @Controller('userbreak')

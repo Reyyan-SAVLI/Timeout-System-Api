@@ -5,7 +5,6 @@ import { AddUserDto } from 'src/dtos/addUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { User } from 'src/entities/user.entity';
 
 @ApiTags('User')
 @Controller('user')
