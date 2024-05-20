@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddUserDto } from 'src/dtos/addUser.dto';
 import { Breaks } from 'src/entities/breaks.entity';
@@ -37,69 +37,46 @@ export class UserService {
         return await this.userRepository.findOne({ where: {id}});
     }
 
-    // async getBreaksByDate(date: string){
+    async getBreaksByDate(date: Date){
 
-    //     const breaks = await this.breaksRepository.find({where:{date: date}, relations: ['user']});
-    //     return breaks;
-    // }
+        const breaks = await this.breaksRepository.find({where:{date: date}, relations: ['user']});
+        return breaks;
+    }
 
     async getAllBreakTime(){
-        const breaks = await this.breaksRepository.find({relations: ['user']});
+      const breaks = await this.breaksRepository.createQueryBuilder('breaks')
+      .leftJoinAndSelect('breaks.user', 'user')
+      .select([
+        'user.name',
+        'user.surname',
+        'breaks.date',
+        'SUM(TIME_TO_SEC(TIMEDIFF(breaks.breakExit, breaks.breakEntry)) / 60) AS totalBreakTime'
+      ])
+      .groupBy('user.name, user.surname, breaks.date')
+      .orderBy('user.name, breaks.date')
+      .getRawMany();
 
-        const userBreakTimes = new Map<string, number>();
-
-      breaks.forEach(b => {
-        const breakEntryTimeStr = b.breakEntry as unknown as string;
-        const breakExitTimeStr = b.breakExit as unknown as string;
-
-        const breakEntryTime = new Date(`1970-01-01T${breakEntryTimeStr}Z`);
-        const breakExitTime = new Date(`1970-01-01T${breakExitTimeStr}Z`);
-
-      if (isNaN(breakEntryTime.getTime()) || isNaN(breakExitTime.getTime())) {
-        throw new Error('Invalid Date encountered');
-      }
-
-        const breakDuration = (breakExitTime.getTime() - breakEntryTime.getTime()) / (60 * 1000);
-
-        const userName = `${b.user.name} ${b.user.surname}`;
-      if (userBreakTimes.has(userName)) {
-        userBreakTimes.set(userName, userBreakTimes.get(userName) + breakDuration);
-      } else {
-        userBreakTimes.set(userName, breakDuration);
-      }});
-
-        const result = [];
-       for (const [user, totalBreakTime] of userBreakTimes) {
-        result.push({ user, totalBreakTime });
-       }
-
-     return result;
+    return breaks.map(b => ({
+      user: `${b.user_name} ${b.user_surname}`,
+      date: new Date(b.breaks_date).toISOString().split('T')[0], // Tarih formatını düzelt
+      totalBreakTime: parseFloat(b.totalBreakTime)
+    }));
 
     }
 
-    async getBreakTime(user: User){
-       const breaks = await this.breaksRepository.find({where: {user}});
+    async getBreakTime(userId: number){
 
-       let totalBreakTime = 0;
+      const breaks = await this.breaksRepository.createQueryBuilder('breaks')
+      .select('breaks.date', 'date')
+      .addSelect('SUM(TIME_TO_SEC(TIMEDIFF(breaks.breakExit, breaks.breakEntry)) / 60)', 'totalBreakTime')
+      .where('breaks.userId = :userId', { userId })
+      .groupBy('breaks.date')
+      .getRawMany();
 
-       breaks.forEach(b => {
-        // breakEntry ve breakExit değerlerini string olarak al
-        const breakEntryTimeStr = b.breakEntry as unknown as string;
-        const breakExitTimeStr = b.breakExit as unknown as string;
-  
-        // breakEntry ve breakExit değerlerini Date nesnesine dönüştür
-        const breakEntryTime = new Date(`1970-01-01T${breakEntryTimeStr}Z`);
-        const breakExitTime = new Date(`1970-01-01T${breakExitTimeStr}Z`);
-  
-  
-        if (isNaN(breakEntryTime.getTime()) || isNaN(breakExitTime.getTime())) {
-          throw new Error('Invalid Date encountered');
-        }
-  
-        const breakDuration = (breakExitTime.getTime() - breakEntryTime.getTime()) / (60 * 1000);
-        totalBreakTime += breakDuration;
-      });
-  
-      return `Total Break Time: ${totalBreakTime} minutes`;
+    
+      return breaks.map(b => ({
+        date: new Date(b.date).toISOString().split('T')[0],
+        totalBreakTime: parseFloat(b.totalBreakTime)
+      }));
     }
 }
