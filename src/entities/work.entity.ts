@@ -16,9 +16,6 @@ export class Work{
     @Column({type: 'time', nullable: true })
     workExit: Date;
 
-    @OneToMany(()=> Breaks, (breaks) => breaks.work)
-    breaks: Breaks[];
-
     @ManyToOne(()=>User, (user)=> user.work)
     user : User;
 }

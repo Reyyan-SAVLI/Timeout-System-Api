@@ -19,7 +19,5 @@ export class Breaks{
     @ManyToOne(()=>User, (user)=> user.breaks)
     user : User;
 
-    @ManyToOne(()=>Work, (work)=> work.breaks)
-    work : Work;
 
 }

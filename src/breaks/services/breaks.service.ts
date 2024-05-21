@@ -31,22 +31,37 @@ export class BreaksService {
     }
 
     
-    async userBreakIn(user: User ,addBreaksDto: AddBreaksInDto): Promise<Breaks>{
-        const work = await this.workRepository.findOne({ where: {user}, relations: ['breaks']});
-        const newBreak = new Breaks();
-        newBreak.date = addBreaksDto.date;
-        newBreak.breakEntry = addBreaksDto.breakEntry;
-        newBreak.user = user;
-        newBreak.work = work;
+    async userBreakIn(user: User ,addBreaksDto: AddBreaksInDto){
+        const today = new Date();
+        const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+        const formattedDate = todayUTC.toISOString().split('T')[0];
+       
+        const breaks = await this.breaksRepository.findOne({where: {user}, order: {breakEntry:'DESC' }});
+        const works = await this.workRepository.findOne({where: {user, date: todayUTC}, order: {workEntry:'DESC' }});
+        const date = works.date.toString();
+ 
+        if ( works.workExit == null) {
+            if (breaks.breakExit == null && date == formattedDate) {
+                return 'Mola çıkışı yapmadığınız için yeni mola girişi yapamazsınız.'; 
+            }else{
+                const newBreak = new Breaks();
+                newBreak.date = addBreaksDto.date;
+                newBreak.breakEntry = addBreaksDto.breakEntry;
+                newBreak.user = user;
 
-        return await this.breaksRepository.save(newBreak);
+                return await this.breaksRepository.save(newBreak);
+            }
+        }else{
+            return 'İş girişiniz olmadığı için mola girişi yapamazsınız.';
+        }
+        
     }
 
     async userBreakOut(user: User, addBreaksDto: AddBreaksOutDto): Promise<Breaks>{
         const { breakExit } = addBreaksDto;
         const today = new Date();
-        today.setHours(0,0,0,0);
-        const entry = await this.breaksRepository.findOne({where: {user, date: today}, order: {breakEntry:'DESC' }});
+        const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+        const entry = await this.breaksRepository.findOne({where: {user, date: todayUTC}, order: {breakEntry:'DESC' }});
         
         if (entry) {
             entry.breakExit = breakExit;

@@ -29,21 +29,33 @@ export class WorkService {
     }
 
 
-    async userWorkIn(user: User, addWorkDto: AddWorkInDto): Promise<Work>{
+    async userWorkIn(user: User, addWorkDto: AddWorkInDto){
+        const today = new Date();
+        const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+        const formattedDate = todayUTC.toISOString().split('T')[0];
+        const works = await this.workRepository.findOne({where: {user}, order: {workEntry:'DESC' }});
+        const date = works.date.toString();
+        
+        if (works.workExit == null && date == formattedDate) {
+            return 'İş çıkışınız olmadığı için yeni giriş yapamazsınız.';
+        }else {
             const workIn = new Work();
             workIn.date = addWorkDto.date;
             workIn.workEntry = addWorkDto.workEntry;
             workIn.user = user;
     
            return await this.workRepository.save(workIn);
+        }
+        
     }
     
     async userWorkOut(user: User, addWorkDto: AddWorkOutDto): Promise<Work>{
             const { workExit } = addWorkDto;
             const today = new Date();
-            today.setHours(0,0,0,0);
-            const entry = await this.workRepository.findOne({where: {user, date: today}});
-            if (entry) {
+            const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+            
+            const entry = await this.workRepository.findOne({where: {user, date: todayUTC}, order: {workEntry:'DESC' }});
+            if (entry.workExit == null) {
                 entry.workExit = workExit;
                 return await this.workRepository.save(entry);
             } else {
