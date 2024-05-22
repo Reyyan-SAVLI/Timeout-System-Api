@@ -38,9 +38,10 @@ export class BreaksService {
        
         const breaks = await this.breaksRepository.findOne({where: {user}, order: {breakEntry:'DESC' }});
         const works = await this.workRepository.findOne({where: {user, date: todayUTC}, order: {workEntry:'DESC' }});
-        const date = works.date.toString();
- 
-        if ( works.workExit == null) {
+        const date = works?.date?.toString() ?? 'Work date is null';
+        
+        if (works != null) {
+           if ( works.workExit == null) {
             if (breaks.breakExit == null && date == formattedDate) {
                 return 'Mola çıkışı yapmadığınız için yeni mola girişi yapamazsınız.'; 
             }else{
@@ -53,8 +54,10 @@ export class BreaksService {
             }
         }else{
             return 'İş girişiniz olmadığı için mola girişi yapamazsınız.';
+        } 
+        }else{
+            return 'İş kaydınız yoktur.'
         }
-        
     }
 
     async userBreakOut(user: User, addBreaksDto: AddBreaksOutDto): Promise<Breaks>{

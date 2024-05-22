@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
-import { Work } from "./work.entity";
+import { BreakType } from "src/enums/breaks.enum";
 
 @Entity()
 export class Breaks{
@@ -15,6 +15,9 @@ export class Breaks{
 
     @Column({type: 'time',nullable: true })
     breakExit: Date;
+
+    @Column({type: 'enum', enum: BreakType})
+    breakType: BreakType;
 
     @ManyToOne(()=>User, (user)=> user.breaks)
     user : User;

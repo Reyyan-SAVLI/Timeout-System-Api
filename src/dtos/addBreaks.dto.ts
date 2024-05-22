@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { BreakType } from "src/enums/breaks.enum";
 
 
 export class AddBreaksInDto{
@@ -11,6 +12,11 @@ export class AddBreaksInDto{
         description: 'Break entry time'
     })
     breakEntry: Date; 
+    
+    @ApiProperty({
+        description: 'Break type'
+    })
+    breakType: BreakType; 
 }
 
 export class AddBreaksOutDto{

@@ -1,7 +1,7 @@
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Breaks } from "./breaks.entity";
 import * as bcrypt from "bcrypt";
-import { UserRoles } from "src/enums/user.enum";
+import { UserRoles,UserDepartment } from "src/enums/user.enum";
 import { Work } from "./work.entity";
 
 @Entity()
@@ -21,8 +21,8 @@ export class User{
  @Column()
  password: string;
 
- @Column()
- department: string;
+ @Column({type: 'enum', enum: UserDepartment})
+ department: UserDepartment;
 
  @Column({ type: 'enum', enum: UserRoles, default: UserRoles.MEMBER})
  role: UserRoles;

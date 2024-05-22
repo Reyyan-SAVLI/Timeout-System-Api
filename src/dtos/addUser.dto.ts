@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, Length, Matches } from "class-validator";
 import { MESSAGES, REGEX } from "src/app.utils";
+import { UserDepartment } from "src/enums/user.enum";
 
 
 export class AddUserDto{
@@ -30,5 +31,5 @@ export class AddUserDto{
     @ApiProperty({
         example: 'Yazılım'
     })
-    department : string;
+    department : UserDepartment;
 }
