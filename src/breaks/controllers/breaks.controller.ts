@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { Breaks } from 'src/entities/breaks.entity';
-import { AddBreaksInDto, AddBreaksOutDto } from 'src/dtos/addBreaks.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
 import { BreaksService } from '../services/breaks.service';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { BreakType } from 'src/enums/breaks.enum';
 
 @Controller('breaks')
 @ApiTags('Breaks')
@@ -35,20 +35,20 @@ export class BreaksController {
     @Post('in')
     @UseGuards(RolesGuard)
     @Roles('admin', 'member')
+    @ApiQuery({name: 'type', enum: BreakType})
     async userBreakIn(
         @Request() req,
-        @Body() addBreaksDto: AddBreaksInDto){
+        @Query('type') type: BreakType){
             
-        return this.breaksService.userBreakIn(req.user as User ,addBreaksDto);
+        return this.breaksService.userBreakIn(req.user as User ,type);
     }
 
     @Post('out')
     @UseGuards(RolesGuard)
     @Roles('admin', 'member')
     async userBreakOut(
-        @Request() req,
-        @Body() addBreaksDto: AddBreaksOutDto){
+        @Request() req,){
             
-        return this.breaksService.userBreakOut(req.user as User, addBreaksDto);
+        return this.breaksService.userBreakOut(req.user as User);
     }
 }

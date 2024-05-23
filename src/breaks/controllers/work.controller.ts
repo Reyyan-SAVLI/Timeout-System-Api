@@ -1,8 +1,7 @@
-import { Body, Controller, Post, UseGuards, Request, Get, Param } from "@nestjs/common";
+import { Controller, Post, UseGuards, Request, Get, Param } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { WorkService } from "../services/work.service";
-import { AddWorkInDto, AddWorkOutDto } from "src/dtos/addWork.dto";
 import { User } from "src/entities/user.entity";
 import { Work } from "src/entities/work.entity";
 import { RolesGuard } from "src/auth/roles.guard";
@@ -35,20 +34,18 @@ export class WorkController {
     @UseGuards(RolesGuard)
     @Roles('admin', 'member')
     async userWorkIn(
-        @Request() req,
-        @Body() addWorkDto: AddWorkInDto){
+        @Request() req){
             
-        return this.workService.userWorkIn(req.user as User, addWorkDto);
+        return this.workService.userWorkIn(req.user as User);
     }
 
     @Post('out')
     @UseGuards(RolesGuard)
     @Roles('admin', 'member')
     async userWorkOut(
-        @Request() req,
-        @Body() addWorkDto: AddWorkOutDto){
+        @Request() req){
             
-        return this.workService.userWorkOut(req.user as User, addWorkDto);
+        return this.workService.userWorkOut(req.user as User);
     }
 
 }
